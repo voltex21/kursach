@@ -1,0 +1,113 @@
+package javaapplication1;
+
+import java.awt.GridLayout;                                      // подключаем библиотеку
+import java.awt.event.*;                                         // подключаем библиотеку
+import javax.swing.*;                                            // подключаем библиотеку swing
+class Kursach extends JFrame {                                   // создаем класс Kursach
+        public static void main(String[] args) {                 // метод main
+                Kursach window = new Kursach();                  // создаем объект window класса Kursach
+                window.setVisible(true);                         // делаем окно видимым
+                window.setSize(450, 250);}                       // устанавливаем размер окна
+        /* Объявление и инициализация номпнентов */
+        private final JTextField height = new JTextField();           
+        private final JTextField width = new JTextField();
+         private final JTextField l = new JTextField();
+        private final JLabel kolvo = new JLabel("");
+         private final JLabel stoim = new JLabel("");
+        /* Конструктор */
+        public Kursach() {                                      
+                /* Создание кнопок */
+                JButton calcButton = new JButton("  Рассчитать  "); // создание кнопки
+                calcButton.addActionListener(new calcListener()); // добавление обработчика
+                JButton cleanButton = new JButton("Очистить");   // создание кнопки
+                cleanButton.addActionListener(new cleanListener()); // добавление обработчика
+                /* Расположение элементов. */
+                JPanel p1 = new JPanel();                        // создаем панель p1
+                GridLayout gl = new GridLayout(4,1);            // создаем табличный layout 4*1
+                p1.setLayout(gl);                                // устанавливаем его в панель p1
+                p1.add(new JLabel("Расход топлива, л/100 км:"));     // добавление надписи в панель
+                p1.add(width);                                 // добавление текстового поля в панель
+                p1.add(new JLabel("Расстояние, км:"));           // добавление надписи в панель
+                p1.add(height); 
+                p1.add(new JLabel("Стоимость топлива:"));
+                p1.add(l);
+                p1.add(calcButton);                              // добавление кнопки рассчета в панель
+                p1.add(cleanButton);                             // добавление кнопк очистки в панель
+                JPanel content = new JPanel();                   // создаем панель content
+                content.add(new JLabel("Расход топлива.")); //добавление надписи в панель
+                content.add(new JLabel("Введите нужные данные."));//добавление надписи в панель
+                content.add(p1);                                 // Добавление панели p1 в панель content
+                content.add(new JLabel("")); //добавление надписи в панель
+                content.add(kolvo); 
+                 content.add(new JLabel(""));
+                 content.add(stoim); 
+                        //добавление текстового поля в панель
+                /* Устанавливаем харрактеристики окна */
+                setContentPane(content);                         // добавляем панель content в окно
+                setTitle("Расход топлива");     // пишем название окна
+                pack();                                          // устанавливаем оптимальный размер окна
+                setResizable(false);}                            // запрещаем изменять размер окна
+        /* обработчик кнопки рассчета */
+        private class calcListener implements ActionListener {   // создаем класс calcListener
+                @Override                                        // проверяем переопределен ли метод
+                public void actionPerformed(ActionEvent e) {     // создаем обработку нажатия
+                        String pText = width.getText();        // считываем в переменную pText текст из поля _pField
+                        String uText = height.getText();
+                         String lText = l.getText();
+                        if ((checkForCorrect(pText)) || (checkForCorrect(uText))||(checkForCorrect(lText))) // если данные введены некорректно
+                        {
+                            kolvo.setText("Некорректно введены данные");
+                            stoim.setText("");
+                        } // Выводим сообщение об ошибке
+                        else {                                   // иначе
+                                int P = Integer.parseInt(pText); // создаем переменные  и присваиваем им
+                                int U = Integer.parseInt(uText);
+                                int L = Integer.parseInt(lText);// значения переменных pText и uText и lText
+                                if ((P == 0) || (U == 0))        // если хотя бы одна переменная = 0
+                                        kolvo.setText("Значения должны быть > 0"); // выводим сообщение
+                                else {                           // иначе
+                                        int I = (int) calculate(P,U); // рассчитываем
+                                              kolvo.setText("Расход топлива на " + U + " км. составляет "+ I +"л.");
+                                if (L == 0)        // если  переменная = 0
+                                        stoim.setText("Значения должны быть > 0"); // выводим сообщение
+                                else {                           // иначе
+                                        int G = (int) calculate1(P,U,L); // рассчитываем
+                                              stoim.setText("Стоимость "+ G +"руб.");
+                                        }}}}} // выводим ответ
+        
+        /* Обработчик кнопки очистки */
+        private class cleanListener implements ActionListener {  // создаем класс cleanListener
+                @Override                                        // проверяем переопределен ли метод
+                public void actionPerformed(ActionEvent e) {     // создаем обработку нажатия
+                        kolvo.setText(""); 
+                        stoim.setText("");// вставляем пустую строку в поле _iField
+                        width.setText("");                     // вставляем пустую строку в поле _pField
+                        height.setText("");
+                        l.setText("");                     // вставляем пустую строку в поле _pField
+                       }}                  // вставляем пустую строку в поле _uField
+        /* Функция рассчета */
+        public static double calculate(double width, double height){
+            int h=(int) (height/width);
+            
+            return h;
+        }
+         public static double calculate1(double width, double height,double l){
+            int h=(int) (height/width*l);
+            
+            return h;
+        }
+        /* Функция для проверки на корректность записи */
+        public static boolean checkForCorrect(String Str) {      // создаем функцию
+                int length = Str.length();                       // присваеаем length длину строки
+                boolean point = false;                           // объявляем и инициализируем переменную point
+                for (int i = 0; i < (length); i++) {             // открываем цикл от 0 до length
+                        if (Str.charAt(i) == '.')                // если в строке встречается точка
+                                if (point == false) {            // если точка раньше не встречалась
+                                        point = true;            // запоминаем, что встретилась точка
+                                        continue;                // продолжаем цикл
+                                } else                           // иначе
+                                        return true;             // функция возвращает значение true
+                        if ((Str.charAt(i) < '0') || (Str.charAt(i) > '9')) //если в строке есть символ, отличный от цифр 0-9
+                                return true;}                    // функция возвращает значение true
+                return false;}                                   // функция возвращает значение false
+}                                                                // конец блока
